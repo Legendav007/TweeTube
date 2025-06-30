@@ -21,7 +21,7 @@ const generateAccessAndRefreshToken = async(userId)=>{
 
 const registerUser = asyncHandler(async (req , res)=>{
     const {fullName , email , username , password} = req.body;
-    // console.log(use rname);
+    // console.log(username);
     if([fullName , email , password , username].some((field)=>{
         field?.trim === ""
     })){
@@ -33,7 +33,11 @@ const registerUser = asyncHandler(async (req , res)=>{
     if(existedUser){
         throw new ApiError(409 , "User with email or username already existed");
     }
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
+    let avatarLocalPath;
+    if(req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0){
+        avatarLocalPath = req.files.avatar[0].path;
+    }
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
     let coverImageLocalPath;
     if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
@@ -69,8 +73,9 @@ const registerUser = asyncHandler(async (req , res)=>{
 })
 
 const loginUser = asyncHandler(async(req , res)=>{
+    // console.log(req.body)
     const {email , username , password} = req.body;
-    if(!username && !email){
+    if((!username && !email) || (!password)){
         throw new ApiError(400 , "Username or Password is required");
     }
 
@@ -80,20 +85,25 @@ const loginUser = asyncHandler(async(req , res)=>{
     if(!user){
         throw new ApiError(404 , "User not found!");    
     }
+    // console.log(user._id)
     const isPasswordValid = await user.isPasswordCorrect(password);
     if(!isPasswordValid){
         throw new ApiError(401 , "Invalid user credentials");
     }
     const {accessToken , refreshToken} = await generateAccessAndRefreshToken(user._id);
-
-    const loggedInUser = User.findById(user._id).
-    select("-password -refreshToken")
-
+    
+    const loggedInUser = await User.findById(user._id).
+    select("-password -refreshToken" -"watchHistory")
+    // const {fullName} = loggedInUser
+    // console.log(fullName)
+    // console.log(loggedInUser)
     const options = {
         httpOnly : true,
         secure : true
     }
-
+    // console.dir(loggedInUser , {depth : 2})
+    
+    // const safeUser = loggedInUser.toObject()
     return res.status(200).cookie("accessToken" , accessToken , options)
     .cookie("refreshToken" , refreshToken , options)
     .json(
@@ -126,12 +136,12 @@ const logoutUser = asyncHandler(async(req , res)=>{
     }
     return res.status(200).clearCookie("accessToken" , options)
     .clearCookie("refreshToken" , options)
-    .json(new ApiResponse(200 , {} , "User logged successfully"))
+    .json(new ApiResponse(200 , {} , "User logged Out successfully"))
 })
 
 
 const refreshAccessToken = asyncHandler(async(req , res)=>{
-    const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken;
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if(!incomingRefreshToken){
         throw new ApiError(401 , "Unauthorized Request");
     }
@@ -166,8 +176,9 @@ const refreshAccessToken = asyncHandler(async(req , res)=>{
 
 const changeCurrentPassword = asyncHandler(async(req , res) => {
     const {oldPassword , newPassword} = req.body;
+    console.log(oldPassword)
     const user = await User.findById(req.user?._id)
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassord);
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
     if(!isPasswordCorrect){
         throw new ApiError(400 , "Password is incorrect");
     }
@@ -200,7 +211,7 @@ const updateAccountDetails = asyncHandler(async(req , res)=>{
     if(email){
         updateFields.email = email;
     }
-    const user = User.findByIdAndUpdate(req.user?._id ,
+    const user = await User.findByIdAndUpdate(req.user?._id ,
         {   
             $set : updateFields
         },
