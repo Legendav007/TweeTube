@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { login } from "../../Store/authSlice";
+import { login } from "../../Store/authSlice.js";
 import { Logo, Input, Button } from "../index.js";
 import { Link, useNavigate } from "react-router-dom";
 import { icons } from "../../assets/icons.jsx";

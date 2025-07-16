@@ -1,9 +1,9 @@
 import React , {useEffect , useState} from "react";
 import {useForm} from "react-hook-form";
-import { Button, Input, Logo } from "../index";
+import { Button, Input , Logo} from "../index.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {register as createAccount} from "../../Store/authSlice";
+import {register as createAccount} from "../../Store/authSlice.js";
 import {icons} from "../../assets/icons.jsx"
 
 function SignUp() {
@@ -14,13 +14,14 @@ function SignUp() {
     const { loading, userData } = useSelector(({ user }) => user);
     const [showPassword, setShowPassword] = useState(false);
 
-    useEffect(() => {
-      if (authStatus) {
-        navigate("/");
-      } else if (!authStatus && userData) {
-        navigate("/login");
-      }
-    }, [authStatus, userData, navigate]);
+    // useEffect(() => {
+    //   if (authStatus) {
+    //     navigate("/");
+    //   }
+    //   if (!authStatus && userData) {
+    //     navigate("/login");
+    //   }
+    // }, [authStatus, userData, navigate]);
 
     const {
       register,
@@ -48,7 +49,7 @@ function SignUp() {
           <h6 className="mx-auto text-md mb-1">
             Already have an Account?{" "}
             <Link to={"/login"} className="font-semibold text-blue-600 hover:text-blue-400">
-              Sign in now
+              Sign in
             </Link>
           </h6>
           <form
