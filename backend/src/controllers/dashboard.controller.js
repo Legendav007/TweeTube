@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose , {isValidObjectId} from "mongoose";
 import {Like} from "../models/like.models.js"
-import {Subscriber} from "../models/subscription.models.js" 
+import {Subscription} from "../models/subscription.models.js" 
 
 const getChannelStats = asyncHandler(async(req , res)=>{
     const channelStats = {};
@@ -26,7 +26,7 @@ const getChannelStats = asyncHandler(async(req , res)=>{
             },
         },
     ]);
-    const subscriber = await Subscriber.aggregate([
+    const subscriber = await Subscription.aggregate([
         {
             $match : {
                 channel : req.user?._id,
@@ -96,7 +96,7 @@ const getChannelStats = asyncHandler(async(req , res)=>{
 });
 
 const getChannelVideos = asyncHandler(async(req , res)=>{
-    const allVideos = Video.aggregate([
+    const allVideos = await Video.aggregate([
         {
             $match : {
                 owner : new mongoose.Types.ObjectId(req.user?._id),

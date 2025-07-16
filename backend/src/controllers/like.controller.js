@@ -2,12 +2,12 @@ import moongose , {isValidObjectId, Mongoose} from "mongoose"
 import {Comment} from "../models/comment.models.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler"
+import {asyncHandler} from "../utils/asyncHandler.js"
 import {Video} from "../models/video.models.js"
 import {Like} from "../models/like.models.js"
 import {Tweet} from "../models/tweet.models.js"
 
-const getLikeVideos = asyncHandler(async(req , res)=>{
+const getLikedVideos = asyncHandler(async(req , res)=>{
     const likeVideos = await Like.aggregate([
         {
             $match : {
@@ -189,4 +189,4 @@ const toggleLike = asyncHandler(async(req , res)=>{
     );
 });
 
-export {getLikeVideos , toggleLike}
+export {getLikedVideos , toggleLike}
