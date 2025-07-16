@@ -13,13 +13,25 @@ import {
 import { Provider } from "react-redux";
 import { store } from "./Store/store.js";
 import {
-  Login , SignUp , AuthLayout , LoginPopUp
+  Login , SignUp , AuthLayout , LoginPopUp , PageNotFound , Home,
+  Feed
 } from "./Components/index.js"
+
+import FeedVideos from './Pages/FeedVideos.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      {/* Login */}
+      {/* Main Layout Route */}
+      <Route path="/" element={<App />}>
+        <Route path="" element={<Home />}>
+          <Route path="" element={<Feed />}>
+            <Route index element={<FeedVideos />} />
+          </Route>
+        </Route>
+      </Route>
+
+      {/* Login Route */}
       <Route
         path="/login"
         element={
@@ -28,7 +40,8 @@ const router = createBrowserRouter(
           </AuthLayout>
         }
       />
-      {/* SignUp */}
+
+      {/* Signup Route */}
       <Route
         path="/signup"
         element={
@@ -37,10 +50,12 @@ const router = createBrowserRouter(
           </AuthLayout>
         }
       />
+
+      {/* 404 Route */}
+      <Route path="*" element={<PageNotFound />} />
     </>
   )
 );
-
 
 createRoot(document.getElementById('root')).render(
   <Provider store = {store}>

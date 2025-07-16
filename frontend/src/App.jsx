@@ -4,8 +4,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import loader from "./assets/loader.gif";
 import lightLoader from "./assets/lightLoader.gif";
+import loader from "./assets/loader.gif"
+import { getCurrentUser } from './Store/userSlice.js';
+import { healthCheck } from './Store/healthcheck.js';
 
 function App() {
   const dispatch = useDispatch();

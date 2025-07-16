@@ -9,19 +9,21 @@ import {icons} from "../../assets/icons.jsx"
 function SignUp() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-  
+
     const authStatus = useSelector(({ auth }) => auth.status);
     const { loading, userData } = useSelector(({ user }) => user);
     const [showPassword, setShowPassword] = useState(false);
 
-    // useEffect(() => {
-    //   if (authStatus) {
-    //     navigate("/");
-    //   }
-    //   if (!authStatus && userData) {
-    //     navigate("/login");
-    //   }
-    // }, [authStatus, userData, navigate]);
+    useEffect(() => {
+      if(authStatus) {
+        navigate("/");
+      }
+      else if (!authStatus && userData) {
+        if (location.pathname !== "/signup") {
+          navigate("/login");
+        }
+      }
+    }, [authStatus, userData, navigate, location]);
 
     const {
       register,
