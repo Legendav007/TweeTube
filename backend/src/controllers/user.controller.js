@@ -99,7 +99,7 @@ const loginUser = asyncHandler(async(req , res)=>{
     // console.log(loggedInUser)
     const options = {
         httpOnly : true,
-        secure : true
+        secure : true,
     }
     // console.dir(loggedInUser , {depth : 2})
     

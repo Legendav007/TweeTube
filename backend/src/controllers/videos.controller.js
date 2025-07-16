@@ -1,18 +1,18 @@
 import mongoose , {isValidObjectId} from "mongoose"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {ApiError} from "../utils/ApiError.js"
-import { Video } from "../models/video.model.js";
-import { User } from "../models/user.model.js";
+import { Video } from "../models/video.models.js";
+import { User } from "../models/user.models.js";
 import {
     deleteImageOnCloudinary,
     deleteVideoOnCloudinary,
     uploadImageOnCloudinary,
     uploadVideoOnCloudinary,
 } from "../utils/cloudinary.js";
-import { Comment } from "../models/comment.model.js";
-import { Like } from "../models/like.model.js";
+import { Comment } from "../models/comment.models.js";
+import { Like } from "../models/like.models.js";
 import {stopWords} from "../utils/stopWords.js"
-import { Playlist } from "../models/playlist.model.js";
+import { Playlist } from "../models/playlist.models.js";
 import fs from "fs";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
