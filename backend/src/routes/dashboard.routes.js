@@ -10,7 +10,7 @@ router.use(verifyJWT);
 
 // http://localhost:3000/api/v1/dashboard/...
 
-router.route("/states").get(getChannelStats);
+router.route("/stats").get(getChannelStats);
 router.route("/videos").get(getChannelVideos);
 
 export default router;
