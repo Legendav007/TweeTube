@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { parseErrorMessage } from "../Helpers/parseErrMsg.helper.js";
-import { axiosInstance } from "../Helpers/axiox.helper.js";
+import { axiosInstance } from "../Helpers/axios.helper.js";
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 

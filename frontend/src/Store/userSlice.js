@@ -1,7 +1,7 @@
 
 import {createSlice} from "@reduxjs/toolkit"
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInstance } from "../Helpers/axiox.helper.js";
+import { axiosInstance } from "../Helpers/axios.helper.js";
 import { parseErrorMessage } from "../Helpers/parseErrMsg.helper.js";
 import {toast} from "react-toastify"
 
@@ -13,7 +13,7 @@ const initialState = {
 
 export const getCurrentUser = createAsyncThunk("auth/getCurrentUser", async () => {
     try {
-      const response = await axiosInstance.get("/users/get-current-user");
+      const response = await axiosInstance.get("/users/current-user");
       return response.data.data;
     } catch (error) {
       console.error("BACKEND_ERROR :: GET CURRENT USER");

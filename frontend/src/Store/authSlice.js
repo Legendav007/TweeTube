@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit"
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInstance } from "../Helpers/axiox.helper.js";
+import { axiosInstance } from "../Helpers/axios.helper.js";
 import { parseErrorMessage } from "../Helpers/parseErrMsg.helper.js";
 import {toast} from "react-toastify"
 
@@ -64,7 +64,7 @@ const authSlice = createSlice({
         });
         builder.addCase(login.fulfilled , (state , action)=>{
             state.loading = false,
-            state.status = false,
+            state.status = true,
             state.userData = action.payload;
         });
         builder.addCase(login.rejected , (state , action)=>{
