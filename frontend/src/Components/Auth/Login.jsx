@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, status } = useSelector(({ auth }) => auth);
+  const { loading, status , userData } = useSelector(({ auth }) => auth);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -20,8 +20,9 @@ function Login() {
   } = useForm();
 
   useEffect(() => {
-    if (status) navigate("/");
-  }, []);
+    // console.log("login status changed:" , status);
+    if (status && userData) navigate("/");
+  }, [status , userData]);
 
   const handleLogin = (data) => {
     const isEmail = !data.username.startsWith("@");

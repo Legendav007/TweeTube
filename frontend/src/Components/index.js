@@ -13,8 +13,13 @@ import Home from "./Home"
 import Feed from "./Feed"
 import EmptyVideo from "./Video/EmptyVideo"
 import VideoGrid from "./Video/VideoGrid"
+import GuestTweets from "./GuestPages/GuestTweets"
+import EmptyTweet from "./Tweet/EmptyTweet"
+import TweetAtom from "./Tweet/TweetAtom"
+import LikesComponent from "./Atoms/LikesComponent"
 
 export {Button , Input , Logo , SignUp , Login , AuthLayout,
     LoginPopUp , PageNotFound , LogoutBtn , Header , Aside , 
-    Home , Feed , EmptyVideo , VideoGrid
+    Home , Feed , EmptyVideo , VideoGrid , GuestTweets , EmptyTweet , TweetAtom,
+    LikesComponent
 }

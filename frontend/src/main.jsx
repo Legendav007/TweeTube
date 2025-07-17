@@ -14,10 +14,11 @@ import { Provider } from "react-redux";
 import { store } from "./Store/store.js";
 import {
   Login , SignUp , AuthLayout , LoginPopUp , PageNotFound , Home,
-  Feed
+  Feed , GuestTweets
 } from "./Components/index.js"
 
 import FeedVideos from './Pages/FeedVideos.jsx'
+import FeedTweets from './Pages/FeedTweets.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,15 @@ const router = createBrowserRouter(
         <Route path="" element={<Home />}>
           <Route path="" element={<Feed />}>
             <Route index element={<FeedVideos />} />
+            {/*Home page Feed tweets*/}
+            <Route
+              path="tweets"
+                element={
+                  <AuthLayout authentication guestComponent={<GuestTweets />}>
+                    <FeedTweets />
+                  </AuthLayout>
+                }
+            />
           </Route>
         </Route>
       </Route>
