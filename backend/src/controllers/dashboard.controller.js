@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose , {isValidObjectId} from "mongoose";
 import {Like} from "../models/like.models.js"
 import {Subscription} from "../models/subscription.models.js" 
+import {Video} from "../models/video.models.js"
 
 const getChannelStats = asyncHandler(async(req , res)=>{
     const channelStats = {};
@@ -32,7 +33,7 @@ const getChannelStats = asyncHandler(async(req , res)=>{
                 channel : req.user?._id,
             },
         },
-        {$count : totalSubscribers},
+        {$count : "totalSubscribers"},
     ]);
     const totalLikes = await Like.aggregate([
         {
@@ -96,7 +97,10 @@ const getChannelStats = asyncHandler(async(req , res)=>{
 });
 
 const getChannelVideos = asyncHandler(async(req , res)=>{
-    const allVideos = await Video.aggregate([
+    // console.log(req.user?.username);
+    let allVideos;
+    try{
+        allVideos = await Video.aggregate([
         {
             $match : {
                 owner : new mongoose.Types.ObjectId(req.user?._id),
@@ -142,8 +146,8 @@ const getChannelVideos = asyncHandler(async(req , res)=>{
         },
         {
             $project : {
-                titie : 1,
-                thumnail : 1,
+                title : 1,
+                thumbnail : 1,
                 isPublished : 1,
                 createdAt : 1,
                 updatedAt : 1,
@@ -153,14 +157,17 @@ const getChannelVideos = asyncHandler(async(req , res)=>{
                     $size : "$likes",
                 },
                 dislikesCount : {
-                    $size : "dislikes",
+                    $size : "$dislikes",
                 },
                 commentsCount : {
-                    $size : "comments",
+                    $size : "$comments",
                 },
             },
         },
-    ]);
+    ]);}
+    catch(error){
+        throw new ApiError(400 , "Error is in aggregation");
+    }
     return res.status(200).json(
         new ApiResponse(
             200,

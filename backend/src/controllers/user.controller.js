@@ -272,10 +272,12 @@ const updateUserCoverImage = asyncHandler(async(req , res)=>{
 
 const getUserChannelProfile = asyncHandler(async(req , res)=>{
     const {username} = req.params;
-    if(!username?.trim){
+    if(!username?.trim()){
         throw new ApiError(400 , "User is missing");
     }
-    const channel = await User.aggregate([
+    let channel;
+    try{
+        channel = await User.aggregate([
         {
             $match : {
                 username : username?.toLowerCase()
@@ -305,19 +307,26 @@ const getUserChannelProfile = asyncHandler(async(req , res)=>{
                 channelSubscribedToCount:{
                     $size : "$subscribedTo"
                 },
-                isSubscribed : {
-                    $cond : {
-                        if : {$in : [req.user?._id, "$subscribers.subscriber"]},
-                        then : true,
-                        else : false
+                subscribersIds : {
+                    $map : {
+                        input : '$subscribers',
+                        as : "sub",
+                        in : "$$sub.subscriber"
                     }
+                }
+            }
+        },
+        {
+            $addFields : {
+                isSubscribed : {
+                    $in : [req.user?._id , "$subscribersIds"]
                 }
             }
         },
         {
             $project : {
                 fullName : 1,
-                userName : 1,
+                username : 1,
                 subscribersCount : 1,
                 channelSubscribedToCount : 1,
                 isSubscribed : 1,
@@ -327,6 +336,10 @@ const getUserChannelProfile = asyncHandler(async(req , res)=>{
             }
         }
     ])
+    }
+    catch(error){
+        throw new ApiError(400 , "Issue in the aggregation");
+    }
     if(!channel?.length){
         throw new ApiError(404 , "Channel doesn't exits")
     }
