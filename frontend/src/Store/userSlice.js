@@ -159,6 +159,7 @@ export const deleteLink = createAsyncThunk("user/deleteLink", async (linkId) => 
 });
 
 export const channelProfile = createAsyncThunk("user/channelprofile", async (username) => {
+  // console.log("calling with : ", username);
     try {
       const response = await axiosInstance.get(`/users/c/${username}`);
       //toast.success(response.data.message);

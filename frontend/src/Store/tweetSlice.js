@@ -24,7 +24,7 @@ export const createTweet = createAsyncThunk("tweet/createTweet", async ({ data }
 
 export const getTweet = createAsyncThunk("tweet/getTweet", async (userId) => {
   try {
-    const response = await axiosInstance.get(`/tweets/users/${userId}`);
+    const response = await axiosInstance.get(`/tweets/users/:${userId}`);
     //toast.success(response.data.message);
     return response.data.data;
   } catch (error) {

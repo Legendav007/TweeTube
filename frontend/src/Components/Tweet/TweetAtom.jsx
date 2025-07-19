@@ -14,7 +14,7 @@ function TweetAtom({ tweet, owner, authStatus }) {
   const inputRef = useRef();
 
   useEffect(() => {
-    if (isEditing) inputRef.current.focus();
+    if(isEditing) inputRef.current.focus();
   }, [isEditing]);
 
   function handleCancel() {

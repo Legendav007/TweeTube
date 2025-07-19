@@ -8,10 +8,11 @@ function AuthLayout({ authentication = true, guestComponent = false, children })
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authentication && authStatus !== authentication) {
+    if(authentication && authStatus !== authentication){
       if (guestComponent) return;
       else navigate("/login");
-    } else if (!authentication && authStatus !== authentication) {
+    }
+    else if(!authentication && authStatus !== authentication) {
       navigate("/");
     }
     setLoader(false);

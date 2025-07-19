@@ -35,7 +35,7 @@ function LoginPopup({ route, message = "Login to Continue..." }, ref) {
   });
 
   useEffect(() => {
-    if (showPopup) {
+    if(showPopup && dialog.current){
       dialog.current.showModal();
     }
   }, [showPopup]);
@@ -56,8 +56,10 @@ function LoginPopup({ route, message = "Login to Continue..." }, ref) {
       : { username: data.username.substr(1), password: data.password };
 
     dispatch(login(loginData)).then((res) => {
-      if (res.meta.requestStatus === "fulfilled") if (route) navigate(route);
-      dialog.current.close();
+      if (res.meta.requestStatus === "fulfilled"){
+        if (route) navigate(route);
+        setShowPopup(false);
+      }
     });
   };
 
