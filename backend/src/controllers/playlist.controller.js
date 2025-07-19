@@ -279,7 +279,9 @@ const updatePlaylist = asyncHandler(async(req , res)=>{
 const getVideoSavePlaylists = asyncHandler(async(req , res)=>{
     const {videoId} = req.params;
     if(!isValidObjectId(videoId)) throw new ApiError(400 , "Not a valid object video id");
-    const playlists = await Playlist.aggregate([
+    let playlists;
+    try{
+    playlists = await Playlist.aggregate([
         {
             $match : {
                 owner : new mongoose.Types.ObjectId(req.user?._id),
@@ -289,15 +291,18 @@ const getVideoSavePlaylists = asyncHandler(async(req , res)=>{
             $project : {
                 name : 1,
                 isVideoPresent : {
-                    $cond : {
-                        $if : {$in : [new mongoose.Types.ObjectId(videoId) , "$videos"]},
-                        then : true,
-                        else : false,
-                    },
+                    $cond : [
+                        {$in : [new mongoose.Types.ObjectId(videoId) , "$videos"]},
+                        true,
+                        false
+                    ],
                 },
             },
         },
-    ]);
+    ]);}
+    catch(error){
+        throw new ApiError(500 , "Error in aggregation:" , error.message);
+    }
     if(!playlists) throw new ApiError(400 , "Error while fetching");
     return res.status(200).json(
         new ApiResponse(

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -18,7 +19,7 @@ const toggleSubscription = asyncHandler(async(req , res)=>{
             channel : channelId,
         });
         isSubscribed = false;
-        if(!nSub) throw new ApiError(400 , "Failed subscription func");
+        // if(!nSub) throw new ApiError(400 , "Failed subscription func");
     }
     else{
         const nSub = await Subscription.create({
@@ -113,8 +114,10 @@ const getUserSubscribers = asyncHandler(async(req , res)=>{
 const UserSubscribedChannels = asyncHandler(async(req , res)=>{
     const {subscriberId} = req.params;
     if(!isValidObjectId(subscriberId)) throw new ApiError(400 , "Not valid subscriberId");
-
-    const result = await Subscription.aggregate([
+    // console.log(subscriberId);
+    let result;
+    try{
+     result = await Subscription.aggregate([
         {
             $match : {
                 subscriber : new mongoose.Types.ObjectId(subscriberId),
@@ -150,7 +153,7 @@ const UserSubscribedChannels = asyncHandler(async(req , res)=>{
             $addFields : {
                 "channel.isSubscribed" : {
                     $cond : {
-                        if : {$in : [req.user?._id , "channelSubscribers.subscriber"]},
+                        if : {$in : [req.user?._id , "$channelSubscribers.subscriber"]},
                         then : true,
                         else  : false,
                     },
@@ -162,13 +165,17 @@ const UserSubscribedChannels = asyncHandler(async(req , res)=>{
         },
         {
             $group : {
-                _id : "subscriber",
+                _id : "$subscriber",
                 subscribedChannels : {
                     $push : "$channel",
                 },
             },
         },  
     ]);
+    }
+    catch(error){
+        throw new ApiError(400 , "Error is in aggregation" , error.message)
+    }
     const users = result?.length > 0 ? result[0].subscribedChannels : [];
     return res.status(200)
     .json(new ApiResponse(200 , users , "Subscribed channel list sent!"));

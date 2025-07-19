@@ -112,12 +112,12 @@ const getAllVideosByOption = asyncHandler(async(req , res)=>{
             $unwind : "$owner",
         },
     );
-    const videoAggregate = await Video.aggregate(pipeline);
+    // const videoAggregate = await Video.aggregate(pipeline);
     const options = {
         page : parseInt(page , 10),
         limit : parseInt(limit , 10)
     }
-    const allVideos = await Video.aggregatePaginate(videoAggregate , options);
+    const allVideos = await Video.aggregatePaginate(pipeline , options);
     const {docs , ...pagingInfo} = allVideos;
     return res.status(200)
     .json(
@@ -194,7 +194,7 @@ const publishVideo = asyncHandler(async(req , res)=>{
         fs.unlinkSync(thumbnailLocalFilePath);
         return;
     }
-    const thumbnailFile = uploadImageOnCloudinary(thumbnailLocalFilePath);
+    const thumbnailFile = await uploadImageOnCloudinary(thumbnailLocalFilePath);
     if(!thumbnailFile) throw new ApiError(500 , "Error while uploading thumbnail");
     if(req.customConnectionClosed){
         console.log("Connection closed!!! deleting video and aborting thumbnail upload...");
@@ -203,7 +203,7 @@ const publishVideo = asyncHandler(async(req , res)=>{
         return;
     }
     console.log("updating db...");
-    const video = await Video.create({
+    let video = await Video.create({
         videoFile : videoFile.hlsurl,
         title,
         description : description || "",
@@ -216,7 +216,7 @@ const publishVideo = asyncHandler(async(req , res)=>{
         console.log("Connection closed!!! deleting video & thumbnail & dbEntry and aborting response...");
         await deleteVideoOnCloudinary(videoFile.url);
         await deleteImageOnCloudinary(thumbnailFile.url);
-        let video = await Video.findByIdAndDelete(video._id);
+        video = await Video.findByIdAndDelete(video._id);
         console.log("Deleted the Video from db: ", video);
         console.log("All resources Cleaned up & request closed...");
         return;       
@@ -228,7 +228,9 @@ const publishVideo = asyncHandler(async(req , res)=>{
 const getVideoById = asyncHandler(async(req , res)=>{
     const {videoId} = req.params;
     if(!isValidObjectId(videoId)) throw new ApiError(400 , "Invalid videoId");
-    const video = await Video.aggregate([
+    let video;
+       try{
+        video = await Video.aggregate([
         {
             $match : {
                 _id : new mongoose.Types.ObjectId(videoId),
@@ -261,12 +263,12 @@ const getVideoById = asyncHandler(async(req , res)=>{
         {
             $lookup : {
                 from : "likes",
-                localField : "id",
+                localField : "_id",
                 foreignField : "video",
                 as : "dislikes",
                 pipeline : [
                     {
-                        match : {
+                        $match : {
                             liked : false,
                         },
                     },
@@ -359,7 +361,10 @@ const getVideoById = asyncHandler(async(req , res)=>{
                 },
             },
         },
-    ]);
+    ]);}
+    catch(error){
+        throw new ApiError(400 , "Error in aggregation pipeline")
+    }
     if(!video.length > 0) throw new ApiError(400 , "No video found");
     return res.status(200)
     .json(new ApiResponse(200 , video[0] , "Video sent successfully"));
