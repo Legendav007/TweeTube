@@ -16,7 +16,7 @@ import {
   Login , SignUp , AuthLayout , LoginPopUp , PageNotFound , Home,
   Feed , GuestTweets , GuestAdmin , ChannelVideos , GuestMyChannel,
   ChannelTweets , ChannelPlaylist , ChannelSubscribed , AboutChannel,
-  GuestHistory
+  GuestHistory , GuestLikedVideos
 } from "./Components/index.js"
 
 import Channel from './Pages/Channel.jsx'
@@ -25,6 +25,7 @@ import FeedTweets from './Pages/FeedTweets.jsx'
 import Dashboard from "./Pages/Dashboard.jsx"
 import VideoDetail from "./Pages/VideoDetail.jsx"
 import History from './Pages/History.jsx'
+import LikedVideos from './Pages/LikedVideos.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -81,6 +82,14 @@ const router = createBrowserRouter(
               element={
                 <AuthLayout authentication guestComponent={<GuestHistory/>}>
                   <History/>
+                </AuthLayout>
+              }
+            />
+            {/*Liked Videos*/}
+            <Route path='feed/liked'
+              element={
+                <AuthLayout authentication guestComponent>
+
                 </AuthLayout>
               }
             />
