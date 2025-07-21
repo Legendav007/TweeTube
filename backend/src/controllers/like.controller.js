@@ -1,4 +1,4 @@
-import moongose , {isValidObjectId, Mongoose} from "mongoose"
+import mongoose , {isValidObjectId, Mongoose} from "mongoose"
 import {Comment} from "../models/comment.models.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
@@ -7,60 +7,56 @@ import {Video} from "../models/video.models.js"
 import {Like} from "../models/like.models.js"
 import {Tweet} from "../models/tweet.models.js"
 
-const getLikedVideos = asyncHandler(async(req , res)=>{
-    const likeVideos = await Like.aggregate([
+const getLikedVideos = asyncHandler(async (req, res) => {
+    const userId = new mongoose.Types.ObjectId(req.user._id);
+    const likedVideos = await Like.aggregate([
         {
-            $match : {
-                video : {$ne : null},
-                likedBy : new Mongoose.Types.ObjectId(req._id)
+            $match: {
+                video: { $ne: null },
+                likedBy: userId,
             },
         },
         {
             $lookup: {
-                from : "videos",
-                localField : "video",
-                foreignField : "_id",
-                as : "video",
-                pipeline : [
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "video",
+                pipeline: [
                     {
-                        $lookup : {
-                            from : "users",
-                            localField : "owner",
-                            foreignField : "_id",
-                            as : "owner",
-                            pipeline : [
+                        $match: { isPublished: true },
+                    },
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
                                 {
-                                    $project : {
-                                        username : 1,
-                                        fullName : 1,
-                                        avatar : 1,
+                                    $project: {
+                                        username: 1,
+                                        fullName: 1,
+                                        avatar: 1,
                                     },
                                 },
                             ],
                         },
                     },
                     {
-                        $unwind : "$owner",
+                        $unwind: "$owner",
                     },
                 ],
             },
         },
         {
-            $unwind : "$video",
+            $unwind: "$video", 
         },
         {
-            $match : {
-                "video.isPublished" : true,
-            },
+            $replaceRoot: { newRoot: "$video" },
         },
-        {
-            $group : {
-                _id : "likedBy",
-                videos : {$push : "$video"},
-            },
-        },
-    ])
-    const videos = likeVideos[0]?.videos || [];
+    ]);
+    const videos = likedVideos[0]?.videos || [];
     return res.status(200)
     .json(new ApiResponse(200 , videos , "Liked videos sent successfully"));
 })
@@ -78,7 +74,7 @@ const toggleLike = asyncHandler(async(req , res)=>{
     let userLike;
     if(commentId){
         const comment = await Comment.findById(commentId)
-        if(!comment) throw new ApiError(200 , "No comment found")
+        if(!comment) throw new ApiError(400 , "No comment found")
         userLike = await Like.find({
             comment : commentId,
             likedBy : req.user?._id,    
@@ -95,7 +91,7 @@ const toggleLike = asyncHandler(async(req , res)=>{
     else if(tweetId){
         const tweet = await Tweet.findById(tweetId)
         if(!tweet) throw new ApiError(400 , "Tweet does not found")
-        userLike = Tweet.find({
+        userLike = await Tweet.find({
             tweet : tweetId,
             likedBy : req.user?._id
         })
@@ -126,7 +122,7 @@ const toggleLike = asyncHandler(async(req , res)=>{
                 let res = userLike[0].save();
                 if(!res) throw new ApiError(500 , "Error while updating dislike");
                 isLiked = true;
-                isDisLiked = fasle;
+                isDisLiked = false;
             }
             else{
                 await Like.findByIdAndDelete(userLike[0]._id);
@@ -139,28 +135,28 @@ const toggleLike = asyncHandler(async(req , res)=>{
         //Document is not present
         let like;
         if(commentId){
-            like = Like.create({
+            like = await Like.create({
                 comment : commentId,
                 likedBy : req.user?._id,
                 liked : reqLike,
             });
         }
         else if(tweetId){
-            like = Like.create({
+            like = await Like.create({
                 tweet : tweetId,
                 likedBy : req.user?._id,
                 liked : reqLike,
             });
         }
         else if(videoId){
-            like = Like.create({
+            like = await Like.create({
                 video : videoId,
                 likedBy : req.user?._id,
                 liked : reqLike,
             });
         }
         if(!like){
-            throw new ApiError(500 , `Error while {(reqLike)?liking:disliking}`);
+            throw new ApiError(500 , `Error while ${(reqLike)?liking:disliking}`);
         }
         isLiked = reqLike;
         isDisLiked = !reqLike;

@@ -354,7 +354,7 @@ const getWatchHistory = asyncHandler(async(req , res) => {
     const user = await User.aggregate([
         {
             $match : {
-                _id : new mongoose.Types.ObjectId(req.user._id)
+                _id : new mongoose.Types.ObjectId(req.user?._id)
             }
         },
         {
@@ -384,7 +384,7 @@ const getWatchHistory = asyncHandler(async(req , res) => {
                     {
                         $addFields : {
                             owner : {
-                                $first : "owner"
+                                $first : "$owner"
                             }
                         }
                     }
@@ -403,6 +403,26 @@ const getWatchHistory = asyncHandler(async(req , res) => {
     )
 })
 
+const clearWatchHistory = asyncHandler(async(req , res)=>{
+    const result = await User.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(req.user?._id),
+        {
+            $set : {
+                watchHistory : [],
+            },
+        },
+        {
+            new : true,
+        }
+    );
+    if(!result) throw new ApiError(500 , "Error while clearing history");
+    return res.status(200)
+    .json(
+        new ApiResponse(200 , [] , "History cleared successfully")
+    )
+});
+
 export {registerUser,loginUser,logoutUser , refreshAccessToken , getCurrentUser , changeCurrentPassword,
-    updateAccountDetails , updateUserAvatar , updateUserCoverImage , getUserChannelProfile , getWatchHistory
+    updateAccountDetails , updateUserAvatar , updateUserCoverImage , getUserChannelProfile , getWatchHistory,
+    clearWatchHistory
 }

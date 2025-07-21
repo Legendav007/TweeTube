@@ -7,196 +7,100 @@ import {Video} from "../models/video.models.js"
 import {Like} from "../models/like.models.js"
 import mongoose from "mongoose"
 
-const getVideoComments = asyncHandler(async(req , res)=>{
-    const {videoId} = req.params;
-    const {page = 1 , limit = 10} = req.query;
-    if(!isValidObjectId(videoId)) throw new ApiError(400 , "Not a valid video id");
+const getVideoComments = asyncHandler(async(req, res) => {
+    const { videoId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+  
+    if (!isValidObjectId(videoId)) throw new ApiError(400, "Not a valid video id");
+  
     const video = await Video.findById(videoId);
-
-    const comments = await Comment.aggregate([
-        {
-            $match : {
-                video : new mongoose.Types.ObjectId(videoId),
-            },
+    if (!video) throw new ApiError(404, "Video not found");
+  
+    const aggregationPipeline = [
+      { $match: { video: new mongoose.Types.ObjectId(videoId) } },
+      { $sort: { createdAt: -1 } },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "comment",
+          as: "likes",
+          pipeline: [
+            { $match: { liked: true } },
+            { $project: { likedby: 1 } },
+          ],
         },
-        {
-            $sort : {createdAt : -1},
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "comment",
+          as: "dislikes",
+          pipeline: [
+            { $match: { liked: false } },
+            { $project: { likedby: 1 } },
+          ],
         },
-        //likes and dislikes of comment
-        {
-            $lookup : {
-                from : "likes",
-                localField : "_id",
-                foreignField : "comment",
-                as : "likes",
-                pipeline : [
-                    {
-                        $match : {liked : true},
-                    },
-                    {
-                        $group : {
-                            _id : "liked",
-                            owners : {$push : "$likedby"},
-                        },
-                    },
-                ],
-            },
+      },
+      {
+        $addFields: {
+          likes: { $map: { input: "$likes", as: "l", in: "$$l.likedby" } },
+          dislikes: { $map: { input: "$dislikes", as: "d", in: "$$d.likedby" } },
         },
-        {
-            $lookup : {
-                from : "likes",
-                localField : "_id",
-                foreignField : "comment",
-                as : "dislikes",
-                pipeline : [
-                    {
-                        $match : {liked : false},
-                    },
-                    {
-                        $group : {
-                            _id : "liked",
-                            owner : {$push : "$likedby"},
-                        },
-                    },
-                ],
-            },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner",
+          pipeline: [
+            { $project: { fullName: 1, username: 1, avatar: 1 } },
+          ],
         },
-        //Reshaping array
-        {
-            $addFields : {
-                likes : {
-                    $cond : {
-                        if : {
-                            $gt : [{$size : "$likes"} , 0],
-                        },
-                        then : {$first : "$likes.owners"},
-                        else : [],
-                    },
-                },
-                dislikes : {
-                    $cond : {
-                        if : {
-                            $gt : [{$size : "$dislikes"} , 0],
-                        },
-                        then : {$first : "$dislikes.owners"},
-                        else : [],
-                    },
-                },
-            },
-        },
-        //owner details
-        {
-            $lookup : {
-                from : "users",
-                localField : "onwer",
-                foreignField : "_id",
-                as : "owner",
-                pipeline : [
-                    {
-                        $project : {
-                            fullName : 1,
-                            username : 1,
-                            avatar : 1,
-                        },
-                    },
-                ],
-            },
-        },
-        {$unwind : "$owner"},
-        {
-            $project : {
-                content : 1,
-                owner : 1,
-                createdAt : 1,
-                updatedAt : 1,
-                isOwner : {
-                    $cond : {
-                        if : {$eq : [req.user?._id , "$owner.id"]},
-                        then  : true,
-                        else : false,
-                    },
-                },
-                likesCount : {
-                    $size : "$likes",
-                },
-                dislikesCount : {
-                    $size : "$dislikes",
-                },
-                isLiked : {
-                    $cond : {
-                        if : {
-                            $in : [req.user?._id , "$likes"],
-                        },
-                        then : true,
-                        else : false,
-                    },
-                },
-                isDisliked : {
-                    $cond : {
-                        if : {
-                            $in : [req.user?._id , "$dislikes"],
-                        },
-                        then : true,
-                        else : false,
-                    },
-                },
-                isLikedByOwner : {
-                    $cond : {
-                        if : {
-                            $in : [video.owner , "$likes"],
-                        },
-                        then : true,
-                        else : false,
-                    },
-                }
-            },
-        },
-    ]);
-    // return res.status(200).json(
-    //     new ApiResponse(
-    //         200,
-    //         comments,
-    //         "Comments fetched successfully"
-    //     )
-    // );
-    //Paginated Comments
-    const options = {page , limit};
-    Comment.aggregatePaginate(comments , options , function(err , results){
-        if(!err){
-            const {
-                docs,
-                totalDocs,
-                limit,
-                page,
-                totalPages,
-                pagingCounter,
-                hasPrevPage,
-                hasNextPage,
-                prevPage,
-                nextPage,
-            } = results;
-            return res.status(200).json(
-                new ApiResponse(
-                    200,
-                    {
-                        Comments: docs,
-                        totalDocs,
-                        limit,
-                        page,
-                        totalPages,
-                        pagingCounter,
-                        hasPrevPage,
-                        hasNextPage,
-                        prevPage,
-                        nextPage,
-                    }, 
-                    "PaginatedComment fetched successfully"                   
-                )
-            )
+      },
+      { $unwind: "$owner" },
+      {
+        $project: {
+          content: 1,
+          owner: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          isOwner: {
+            $eq: [new mongoose.Types.ObjectId(req.user?._id), "$owner._id"]
+          },
+          likesCount: { $size: "$likes" },
+          dislikesCount: { $size: "$dislikes" },
+          isLiked: {
+            $in: [new mongoose.Types.ObjectId(req.user?._id), "$likes"]
+          },
+          isDisliked: {
+            $in: [new mongoose.Types.ObjectId(req.user?._id), "$dislikes"]
+          },
+          isLikedByOwner: {
+            $in: [video.owner, "$likes"]
+          }
         }
-        else throw new ApiError(500 , err.message);
+      }
+    ];
+  
+    const aggregate = Comment.aggregate(aggregationPipeline);
+    const options = { page: Number(page), limit: Number(limit) };
+  
+    Comment.aggregatePaginate(aggregate, options, (err, results) => {
+      if (err) throw new ApiError(500, err.message);
+  
+    const { docs, ...pagination } = results;
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          { Comments: docs, ...pagination },
+          "Paginated comments fetched successfully"
+        )
+      );
     });
-});
+});  
 
 const addComment = asyncHandler(async(req ,res)=>{
     const {videoId} = req.params;
@@ -210,10 +114,10 @@ const addComment = asyncHandler(async(req ,res)=>{
         owner : req.user?._id,
     });
     if(!comment) throw new ApiError(500 , "Error while commenting");
-    const {username , fullName , avatar , __id} = req.user?._id;
+    const {username , fullName , avatar , _id} = req.user;
     const commentData = {
         ...comment._doc,
-        owner : {username , fullName , avatar , __id},
+        owner : {username , fullName , avatar , _id},
         likesCount : 0,
         isOnwer : true,
     };
@@ -254,7 +158,7 @@ const updateComment = asyncHandler(async(req , res)=>{
 
 const deleteComment = asyncHandler(async(req ,res)=>{
     const {commentId} = req.params;
-    if(isValidObjectId(commentId)) throw new ApiError(400 , "Not a valid comment id");
+    if(!isValidObjectId(commentId)) throw new ApiError(400 , "Not a valid comment id");
     const comment = await Comment.findByIdAndDelete(commentId);
     if(!comment) throw new ApiError(500 , "Error while deleting comment");
     
@@ -262,7 +166,7 @@ const deleteComment = asyncHandler(async(req ,res)=>{
         comment : new mongoose.Types.ObjectId(commentId),
     });
 
-    return res.statsu(200).json(
+    return res.status(200).json(
         new ApiResponse(
         200,
         {isDeleted : true},
