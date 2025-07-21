@@ -50,6 +50,7 @@ import VideoList from "./Video/VideoList"
 import GuestHistory from "./GuestPages/GuestHistory"
 import GuestLikedVideos from "./GuestPages/GuestLikedVideos"
 import GuestComponent from "./GuestPages/GuestComponent"
+import GuestSubscribers from "./GuestPages/GuestSubscribed"
 
 export {Button , Input , Logo , SignUp , Login , AuthLayout,
     LoginPopUp , PageNotFound , LogoutBtn , Header , Aside , 
@@ -60,5 +61,5 @@ export {Button , Input , Logo , SignUp , Login , AuthLayout,
     MyChannelEmptyTweet , ChannelTweets , MyChannelEmptyPlaylist , EmptyPlaylist,
     PlaylistForm , ChannelPlaylist , EmptySubscription , MyChannelEmptySubscription , SubscriptionUser,
     ChannelSubscribed , AboutChannel , VideoPlayer , UserProfile , CommentAtom ,
-    Comments , VideoList , GuestHistory , GuestLikedVideos , GuestComponent
+    Comments , VideoList , GuestHistory , GuestLikedVideos , GuestComponent , GuestSubscribers
 }

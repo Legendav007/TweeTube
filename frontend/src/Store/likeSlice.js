@@ -14,7 +14,7 @@ export const getLikedVideos = createAsyncThunk("like/getLikedVideos", async () =
   try {
     const response = await axiosInstance.get(`/like/videos`);
     //toast.success(response.data.message);
-    console.log(response.data.data)
+    // console.log(response.data.data)
     return response.data.data;
   } catch (error) {
     toast.error(parseErrorMessage(error.response.data));

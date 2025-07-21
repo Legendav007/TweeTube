@@ -5,7 +5,6 @@ import { icons } from "../../assets/icons.jsx";
 
 function VideoView({ videos = [], loading = true, fetching = false }) {
   const navigate = useNavigate();
-
   if (loading)
     return (
       <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
@@ -124,8 +123,8 @@ function VideoView({ videos = [], loading = true, fetching = false }) {
           </div>
         </div>
       </section>
-    );
-    console.log(videos);
+  );
+    // console.log(videos);
   return (
     <section className="w-full pb-[70px] sm:ml-[70px]  sm:pb-0 lg:ml-0">
       <ul className="flex flex-col gap-4 p-4  ">

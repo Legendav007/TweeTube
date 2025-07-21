@@ -21,7 +21,7 @@ function LikedVideos() {
   }, []);
 
   const isHistoryEmpty = !isLoading && videos?.length < 1;
-
+//   console.log(isHistoryEmpty);
   return <>
   {!isHistoryEmpty && <VideoList videos={videos} loading={isLoading} />}
   {isHistoryEmpty && (

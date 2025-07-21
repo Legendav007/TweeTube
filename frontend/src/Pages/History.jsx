@@ -10,7 +10,7 @@ function History() {
   const dispatch = useDispatch();
 
   const { userData, loading } = useSelector(({ user }) => user);
-  console.log("userdata: ",userData)
+  // console.log("userdata: ",userData)
 
   useEffect(() => {
     dispatch(watchHistory());
