@@ -36,10 +36,10 @@ const toggleSubscription = asyncHandler(async(req , res)=>{
 const getUserSubscribers = asyncHandler(async(req , res)=>{
     const {channelId = req.user?._id} = req.params;
     if(!isValidObjectId(channelId)) throw new ApiError(400 , "Not a valid channelId");
-    const result = await subscriber.aggregate([
+    const result = await Subscription.aggregate([
         {
             $match : {
-                channel : new moongose.Types.ObjectId(channelId),
+                channel : new mongoose.Types.ObjectId(channelId),
             },
         },
         {

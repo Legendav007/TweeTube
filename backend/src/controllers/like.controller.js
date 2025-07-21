@@ -7,59 +7,63 @@ import {Video} from "../models/video.models.js"
 import {Like} from "../models/like.models.js"
 import {Tweet} from "../models/tweet.models.js"
 
-const getLikedVideos = asyncHandler(async (req, res) => {
+const getLikedVideos = asyncHandler(async(req, res) =>{
     const userId = new mongoose.Types.ObjectId(req.user._id);
+  
     const likedVideos = await Like.aggregate([
-        {
-            $match: {
-                video: { $ne: null },
-                likedBy: userId,
-            },
+      {
+        $match: {
+          video: { $ne: null },
+          likedBy: userId,
         },
-        {
-            $lookup: {
-                from: "videos",
-                localField: "video",
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "video",
+          foreignField: "_id",
+          as: "video",
+          pipeline: [
+            {
+              $match: { isPublished: true }
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "owner",
                 foreignField: "_id",
-                as: "video",
+                as: "owner",
                 pipeline: [
-                    {
-                        $match: { isPublished: true },
+                  {
+                    $project: {
+                      username: 1,
+                      fullName: 1,
+                      avatar: 1,
                     },
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        username: 1,
-                                        fullName: 1,
-                                        avatar: 1,
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        $unwind: "$owner",
-                    },
+                  },
                 ],
+              },
             },
+            { $unwind: "$owner" },
+          ],
         },
-        {
-            $unwind: "$video", 
+      },
+      { $unwind: "$video" },
+      {
+        $group: {
+          _id: "$likedBy",
+          videos: { $push: "$video" },
         },
-        {
-            $replaceRoot: { newRoot: "$video" },
-        },
+      },
     ]);
+  
     const videos = likedVideos[0]?.videos || [];
-    return res.status(200)
-    .json(new ApiResponse(200 , videos , "Liked videos sent successfully"));
-})
+  
+    return res
+      .status(200)
+      .json(new ApiResponse(200, videos, "videos sent successfully"));
+});
+  
 
 const toggleLike = asyncHandler(async(req , res)=>{
     const {toggleLike , commentId , videoId , tweetId} = req.query
