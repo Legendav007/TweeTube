@@ -14,7 +14,6 @@ import {
 } from "../Store/playlistSlice";
 import { toast } from "react-toastify";
 
-
 import FeedVideos from "./FeedVideos";
 
 function VideoDetail() {
@@ -26,11 +25,7 @@ function VideoDetail() {
 
   const { status: authStatus } = useSelector(({ auth }) => auth);
   const { loading, status, data: video } = useSelector(({ video }) => video);
-
-
-console.log("videodata", video)
-
-
+  // console.log("videodata", video)
   const {
     loading: playlistLoading,
     status: playlistStatus,
@@ -291,7 +286,7 @@ console.log("videodata", video)
     ],
   };
 
-  console.log("this is video options0", videoPlayerOptions)
+  // console.log("this is video options0", videoPlayerOptions)
 
   const handlePlayerReady = (player) => {
     playerRef.current = player;
@@ -318,21 +313,15 @@ console.log("videodata", video)
 
               {/* <VideoPlayer options={videoPlayerOptions} onReady={handlePlayerReady} /> */}
 
-              <VideoPlayer 
-      src={video?.videoFile}
-      thumbnail={video?.thumbnail}
-      title={video?.title}
-      duration={video?.duration}
-      autoPlay={false}
-    />
-
-
-
-
-
+              {video?.videoFile && <VideoPlayer 
+                src={video?.videoFile}
+                thumbnail={video?.thumbnail}
+                title={video?.title}
+                duration={video?.duration}
+                autoPlay={false}
+              />}
             </div>
           </div>
-
           {/* video, Playlist, Like and owner data */}
           <div
             className="group mb-4 w-full rounded-lg border p-4 duration-200 hover:bg-white/5 focus:bg-white/5 drop-shadow"

@@ -46,6 +46,8 @@ import VideoPlayer from "./Atoms/VideoPlayer"
 import UserProfile from "./Atoms/UserProfile"
 import CommentAtom from "./Comment/CommentAtom"
 import Comments from "./Comment/Comments"
+import VideoList from "./Video/VideoList"
+import GuestHistory from "./GuestPages/GuestHistory"
 
 export {Button , Input , Logo , SignUp , Login , AuthLayout,
     LoginPopUp , PageNotFound , LogoutBtn , Header , Aside , 
@@ -56,5 +58,5 @@ export {Button , Input , Logo , SignUp , Login , AuthLayout,
     MyChannelEmptyTweet , ChannelTweets , MyChannelEmptyPlaylist , EmptyPlaylist,
     PlaylistForm , ChannelPlaylist , EmptySubscription , MyChannelEmptySubscription , SubscriptionUser,
     ChannelSubscribed , AboutChannel , VideoPlayer , UserProfile , CommentAtom ,
-    Comments
+    Comments , VideoList , GuestHistory
 }

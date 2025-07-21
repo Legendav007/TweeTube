@@ -69,9 +69,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -92,9 +92,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -115,9 +115,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -138,9 +138,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -161,9 +161,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -184,9 +184,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -207,9 +207,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -230,9 +230,9 @@ function FeedTweets({ owner = false }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-6"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-6 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[50%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>

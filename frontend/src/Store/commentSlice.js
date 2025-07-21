@@ -10,9 +10,9 @@ const initialState = {
   data: null,
 };
 
-export const getVideoComments = createAsyncThunk("comment/getVideoComments", async (videoId) => {
+export const getVideoComments = createAsyncThunk("comment/getVideoComments", async ({videoId , page = 1} , thunkAPI) => {
   try {
-    const response = await axiosInstance.get(`/comment/get/${videoId}`);
+    const response = await axiosInstance.get(`/comment/get/${videoId}?page=${page}`);
     // toast.success(response.data.message);
     return response.data.data;
   } catch (error) {
@@ -26,6 +26,7 @@ export const addComment = createAsyncThunk("comment/addComment", async ({ videoI
   try {
     const response = await axiosInstance.post(`/comment/add/${videoId}`, { content });
     // toast.success(response.data.message);
+    // console.log(response.data.data);
     return response.data.data;
   } catch (error) {
     toast.error(parseErrorMessage(error.response.data));
@@ -72,6 +73,7 @@ const commentSlice = createSlice({
     });
     builder.addCase(getVideoComments.fulfilled, (state, action) => {
       state.loading = false;
+      // console.log("comment data" , action.payload)
       state.data = action.payload;
       state.status = true;
     });
@@ -79,14 +81,19 @@ const commentSlice = createSlice({
       state.loading = false;
       state.status = false;
     });
-
+    // console.log(state.data)
     // add Comment
     builder.addCase(addComment.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(addComment.fulfilled, (state, action) => {
       state.loading = false;
-      state.data.unshift(action.payload);
+      if(!state.data){
+        state.data = {Comments : []}
+      }
+      // console.log("the data is" , state.data)
+      if(!Array.isArray(state.data.Comments)) state.data.Comments = [];
+      state.data.Comments.unshift(action.payload);
       state.status = true;
     });
     builder.addCase(addComment.rejected, (state) => {

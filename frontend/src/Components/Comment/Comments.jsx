@@ -16,16 +16,40 @@ function Comments({ videoId, ownerAvatar }) {
   const { status: authStatus } = useSelector(({ auth }) => auth);
 
   const { status, data } = useSelector((state) => state.comment);
-  const [localCommentData, setLocalCommentData] = useState(null);
+  const [comments , setComments] = useState([]);
+  const [pagination , setPagination] = useState({page : 1 , totalPages : 1});
 
-  useEffect(() => {
-    if (!videoId) return;
-    dispatch(getVideoComments(videoId)).then((res) => {
-      setLocalCommentData(res.payload);
-    });
-  }, [videoId, navigate, dispatch]);
+  const fetchComments = async (page = 1) => {
+    try {
+      const res = await dispatch(getVideoComments({ videoId, page })).unwrap();
+      if (res?.Comments) {
+        if(page === 1){
+          setComments(res.Comments);
+        }
+        else{
+          setComments((prev) => {
+            const existingIds = new Set(prev.map((c) => c._id));
+            const uniqueNewComments = res.Comments.filter((c) => !existingIds.has(c._id));
+            return [...prev, ...uniqueNewComments];
+          });
+        }
+        setPagination({
+          page: res.page,
+          totalPages: res.totalPages,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch comments:", err);
+      toast.error("Failed to load comments");
+    }
+  };
+  
+  useEffect(()=>{
+    if(!videoId) return;
+    fetchComments(1);
+  } , [videoId])
 
-  function handleAddComment(event) {
+  async function handleAddComment(event) {
     event.preventDefault();
     if (!authStatus) return loginPopupDialog.current?.open();
     const content = event.target.content.value;
@@ -34,12 +58,12 @@ function Comments({ videoId, ownerAvatar }) {
       return;
     }
     // OPTIMIZEME Optimize my performance by making a very small network request or no request for adding new comment
-    setLocalCommentData(data);
-    dispatch(addComment({ videoId, content }));
+    await dispatch(addComment({ videoId, content })).unwrap();
+    await fetchComments(1);
     inputRef.current.value = "";
   }
 
-  if (!localCommentData)
+  if (comments.length === 0 && status === false)
     return (
       <div className="fixed inset-x-0 top-full z-[60] h-[calc(100%-69px)] overflow-auto rounded-lg border bg-[#121212] p-4 duration-200 hover:top-[67px]  peer-focus:top-[67px] sm:static sm:h-auto sm:max-h-[500px] lg:max-h-none">
         {/* add comment */}
@@ -67,9 +91,9 @@ function Comments({ videoId, ownerAvatar }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-4"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-5 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[70%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
@@ -88,20 +112,17 @@ function Comments({ videoId, ownerAvatar }) {
                   <span className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-16 h-4"></span>
                 </div>
                 <div className="dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-32 mt-1 h-4"></div>
-                <p className="my-1 text-[14px]">
+                <div className="my-1 text-[14px]">
                   <div className="text-transparent h-5 dark:bg-slate-100/10 bg-zinc-300 rounded animate-pulse w-[70%] outline-none border-b-[1px] border-transparent"></div>
-                </p>
+                </div>
               </div>
             </span>
           </div>
           <hr className="my-2 border-slate-100/50" />
         </div>
       </div>
-    );
-
-  const comments = Array.isArray(data) ? data : Array.isArray(localCommentData) ? localCommentData : [];
-  // Something went wrong Comments...
-  if (!status && !comments)
+  );
+  if (!status && !comments.length === 0)
     return (
       <div className="flex w-full h-screen flex-col gap-y-4 px-16 py-4 rounded dark:bg-slate-100/10 bg-zinc-300 animate-pulse"></div>
     );
@@ -145,12 +166,23 @@ function Comments({ videoId, ownerAvatar }) {
       <hr className="my-4 border-white" />
 
       {/* comments */}
+      {/* {console.log(comments)} */}
       {comments?.map((comment) => (
         <div key={comment._id}>
+          {/* {console.log(comment.username)} */}
           <CommentAtom comment={comment} ownerAvatar={ownerAvatar} videoId={videoId} />
           <hr className="my-2 border-white" />
         </div>
       ))}
+      {pagination.page < pagination.totalPages && (
+        <div className="text-center mt-4">
+          <button
+            onClick={() => fetchComments(pagination.page + 1)}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
+                Load More Comments
+          </button>
+        </div>
+      )}
     </div>
   );
 }

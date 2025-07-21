@@ -15,7 +15,8 @@ import { store } from "./Store/store.js";
 import {
   Login , SignUp , AuthLayout , LoginPopUp , PageNotFound , Home,
   Feed , GuestTweets , GuestAdmin , ChannelVideos , GuestMyChannel,
-  ChannelTweets , ChannelPlaylist , ChannelSubscribed , AboutChannel
+  ChannelTweets , ChannelPlaylist , ChannelSubscribed , AboutChannel,
+  GuestHistory
 } from "./Components/index.js"
 
 import Channel from './Pages/Channel.jsx'
@@ -23,6 +24,7 @@ import FeedVideos from './Pages/FeedVideos.jsx'
 import FeedTweets from './Pages/FeedTweets.jsx'
 import Dashboard from "./Pages/Dashboard.jsx"
 import VideoDetail from "./Pages/VideoDetail.jsx"
+import History from './Pages/History.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -73,6 +75,15 @@ const router = createBrowserRouter(
               }
             />
             <Route path="/watch/:videoId" element={<VideoDetail />} />
+            {/* user feed */}
+            <Route
+              path="feed/history"
+              element={
+                <AuthLayout authentication guestComponent={<GuestHistory/>}>
+                  <History/>
+                </AuthLayout>
+              }
+            />
           </Route>
         </Route>
       </Route>
