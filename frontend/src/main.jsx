@@ -27,6 +27,7 @@ import VideoDetail from "./Pages/VideoDetail.jsx"
 import History from './Pages/History.jsx'
 import LikedVideos from './Pages/LikedVideos.jsx'
 import SearchResult from './Pages/SearchResult.jsx'
+import Support from './Pages/Support.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -104,6 +105,8 @@ const router = createBrowserRouter(
             />
             {/* Search Results */}
             <Route path='results' element={<SearchResult/>}/>
+            {/* Support */}
+            <Route path='support' element={<Support/>}/>
             
           </Route>
         </Route>
