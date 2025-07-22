@@ -26,7 +26,7 @@ import Dashboard from "./Pages/Dashboard.jsx"
 import VideoDetail from "./Pages/VideoDetail.jsx"
 import History from './Pages/History.jsx'
 import LikedVideos from './Pages/LikedVideos.jsx'
-
+import SearchResult from './Pages/SearchResult.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -102,6 +102,9 @@ const router = createBrowserRouter(
                 </AuthLayout>
               }
             />
+            {/* Search Results */}
+            <Route path='results' element={<SearchResult/>}/>
+            
           </Route>
         </Route>
       </Route>
