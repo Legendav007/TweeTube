@@ -24,7 +24,7 @@ export const getCurrentUser = createAsyncThunk("auth/getCurrentUser", async () =
 
 export const changePassword = createAsyncThunk("auth/changePassword", async (data) => {
     try {
-      const response = await axiosInstance.patch("/users/change-password", data, {
+      const response = await axiosInstance.post("/users/change-password", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -39,7 +39,7 @@ export const changePassword = createAsyncThunk("auth/changePassword", async (dat
 
 export const updateProfile = createAsyncThunk("auth/updateProfile", async (data) => {
     try {
-      const response = await axiosInstance.patch("/users/update-profile", data, {
+      const response = await axiosInstance.patch("/users/update-account", data, {
         headers: {
           "Content-Type": "application/json",
         },

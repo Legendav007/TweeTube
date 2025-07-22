@@ -28,6 +28,7 @@ import History from './Pages/History.jsx'
 import LikedVideos from './Pages/LikedVideos.jsx'
 import SearchResult from './Pages/SearchResult.jsx'
 import Support from './Pages/Support.jsx'
+import Settings from './Pages/Settings.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -105,9 +106,18 @@ const router = createBrowserRouter(
             />
             {/* Search Results */}
             <Route path='results' element={<SearchResult/>}/>
+
             {/* Support */}
             <Route path='support' element={<Support/>}/>
-            
+
+            {/*Settings*/}
+            <Route path='settings'
+              element={
+                <AuthLayout authentication>
+                  <Settings/>
+                </AuthLayout>
+              }
+            />
           </Route>
         </Route>
       </Route>
