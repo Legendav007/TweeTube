@@ -85,7 +85,6 @@ export const uploadCoverImage = createAsyncThunk("user/coverImage", async ({ dat
     }
 });
 
-
 export const watchHistory = createAsyncThunk("user/history", async () => {
     try {
       const response = await axiosInstance.get(`/users/history`);
