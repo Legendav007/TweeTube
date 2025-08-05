@@ -1,4 +1,4 @@
-#🐦🎥 TweeTube — Full-Stack Social #Platform for Video + Microblog Sharing
+#TweeTube:Full-Stack Social Platform for Video + Microblog Sharing
 TweeTube is a dynamic full-stack application that blends the functionality of YouTube and Twitter — allowing users to share videos alongside short-form posts (microblogs), all within a clean and interactive interface.
 
 🔧 Tech Stack
