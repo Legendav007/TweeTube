@@ -6,7 +6,15 @@ import morgan from "morgan";
 const app  = express();
 
 app.use(cors({
-    origin : process.env.CORS_ORIGIN_DEV,
+    origin : function(origin , callback){
+        if(!origin || process.env.CORS_ORIGIN_DEV.includes(origin)){
+            callback(null , true);
+        }
+        else{
+            console.error("Blocked by CORS" , origin);
+            callback(new Error("Not allowed by origin"));
+        }
+    },
     credentials : true
 }));
 

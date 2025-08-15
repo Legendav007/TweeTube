@@ -7,7 +7,9 @@ import {Subscription} from "../models/subscription.models.js"
 import {Video} from "../models/video.models.js"
 
 const getChannelStats = asyncHandler(async(req , res)=>{
+    // console.log(req.user?._id);
     const channelStats = {};
+    try{
     const videoStats = await Video.aggregate([
         {
             $match : {
@@ -15,18 +17,19 @@ const getChannelStats = asyncHandler(async(req , res)=>{
             },
         },
         {
-            $project : {
-                viewsCount : {$size : "$views"},
-            },
-        },
-        {
             $group : {
                 _id : null,
-                totalViews : {$sum : "$viewsCount"},
-                totalVideos : {$sum : 1},
+                totalViews : {$sum : "$views"},
+                totalVideos : {$count : {}},
             },
         },
     ]);
+    channelStats.totalViews = (videoStats && videoStats[0]?.totalViews) || 0;
+    channelStats.totalVideos = (videoStats && videoStats[0]?.totalVideos) || 0;
+    } catch(error){
+        throw new ApiError(500 , "Error in getting videoStats");
+    }
+    try{
     const subscriber = await Subscription.aggregate([
         {
             $match : {
@@ -35,6 +38,12 @@ const getChannelStats = asyncHandler(async(req , res)=>{
         },
         {$count : "totalSubscribers"},
     ]);
+    channelStats.totalSubscribers = (subscriber && subscriber[0]?.totalSubscribers) || 0;
+    }
+    catch(error){
+        throw new ApiError(500 , "Error in getting total subscriber");
+    }
+    try{
     const totalLikes = await Like.aggregate([
         {
             $match : {
@@ -80,12 +89,11 @@ const getChannelStats = asyncHandler(async(req , res)=>{
             },
         },
     ]);
-    channelStats.ownerName = req.user?._fullName;
-    channelStats.totalViews = (videoStats && videoStats[0]?.totalViews) || 0;
-    channelStats.totalVideos = (videoStats && videoStats[0]?.totalVideos) || 0;
-    channelStats.totalSubscribers = (subscriber && subscriber[0]?.totalSubscribers) || 0;
     channelStats.totalLikes =(totalLikes && totalLikes[0]?.likeCount) || 0;
-
+    } catch(error){
+        throw new ApiError(500 , "Error in getting total likes")
+    }
+    channelStats.ownerName = req.user?._fullName;
     return res.status(200)
     .json(
         new ApiResponse(
