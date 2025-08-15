@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EditPersonalInfo, EditChannelInfo, ChangePassword } from "../Components/index.js";
 import { useDispatch } from "react-redux";
 import { uploadAvatar, uploadCoverImage } from "../Store/userSlice.js";
+// import {Logo} from "../Components/index.js";
 
 function Settings() {
   const [currentTab, setCurrentTab] = useState(0);
@@ -16,7 +17,7 @@ function Settings() {
       {/* CoverImage */}
       <div className="relative min-h-[150px] w-full pt-[16.28%]">
         <div className="absolute inset-0 overflow-hidden">
-          <img src={userData?.coverImage} alt="cover-photo" />
+          <img src={userData?.coverImage} alt="" />
         </div>
         {/* coverImage Upload */}
         <form

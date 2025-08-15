@@ -6,7 +6,7 @@ function EditPersonalInfo({ userData }) {
   const defaultValues = {
     firstname: (userData?.fullName.split(" ", 2))[0] || "",
     lastname: (userData?.fullName.split(" ", 2))[1] || "",
-    email: userData?.email || "",
+    email: userData?.email || null,
   };
 
   const [data, setData] = useState(defaultValues);
