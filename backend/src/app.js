@@ -6,16 +6,8 @@ import morgan from "morgan";
 const app  = express();
 
 app.use(cors({
-    origin : function(origin , callback){
-        if(!origin || process.env.CORS_ORIGIN_DEV.includes(origin)){
-            callback(null , true);
-        }
-        else{
-            console.error("Blocked by CORS" , origin);
-            callback(new Error("Not allowed by origin"));
-        }
-    },
-    credentials : true
+    origin: "https://tweetube.vercel.app",
+    credentials: true
 }));
 
 app.use(express.json({limit:"16kb"}));
