@@ -89,7 +89,7 @@ export const watchHistory = createAsyncThunk("user/history", async () => {
     try {
       const response = await axiosInstance.get(`/users/history`);
       // toast.success(response.data.message);
-      return response.data.data;
+      return response?.data?.data;
     } catch (error) {
       toast.error(parseErrorMessage(error.response.data));
       console.log(error);
